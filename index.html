@@ -7,47 +7,52 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
+      max-width: 500px;
       margin: auto;
-      padding: 20px;
+      padding: 10px;
       background-color: #f4f4f4;
+      font-size: 14px;
     }
     h2 {
       text-align: center;
+      font-size: 18px;
     }
     .tier {
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       background: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      padding: 8px;
+      border-radius: 6px;
+      box-shadow: 0 0 3px rgba(0,0,0,0.1);
     }
     label {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 2px;
+      font-size: 12px;
     }
     input {
       width: 100%;
-      padding: 5px;
-      margin-bottom: 5px;
+      padding: 4px;
+      margin-bottom: 4px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 3px;
+      font-size: 12px;
     }
     .results {
-      margin-top: 20px;
+      margin-top: 15px;
       background: #fff;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      padding: 8px;
+      border-radius: 6px;
+      box-shadow: 0 0 3px rgba(0,0,0,0.1);
+      font-size: 13px;
     }
     button {
       width: 100%;
-      padding: 10px;
+      padding: 8px;
       background-color: #4CAF50;
       color: white;
       border: none;
       border-radius: 4px;
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
     }
     button:hover {
@@ -80,32 +85,34 @@
     for (let i = 0; i < tierLabels.length; i++) {
       tiersDiv.innerHTML += `
         <div class="tier">
-          <h3>${tierLabels[i]}</h3>
+          <h3 style="font-size:14px; margin:4px 0;">${tierLabels[i]}</h3>
           <label>Your Blanks:</label>
-          <input type="number" min="0" id="own${i}" required>
+          <input type="number" min="0" id="own${i}">
           <label>Total Blanks Entered:</label>
-          <input type="number" min="0" id="total${i}" required>
+          <input type="number" min="0" id="total${i}">
         </div>
       `;
     }
 
     document.getElementById('probForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      let resultsHTML = "<h3>Results:</h3>";
+      let resultsHTML = "<h3 style='font-size:14px;'>Results:</h3>";
       let totalNoWinProb = 1;
+      let anyInput = false;
 
       for (let i = 0; i < tierLabels.length; i++) {
-        const own = parseInt(document.getElementById(`own${i}`).value) || 0;
-        const total = parseInt(document.getElementById(`total${i}`).value) || 0;
+        const own = parseInt(document.getElementById(`own${i}`).value);
+        const total = parseInt(document.getElementById(`total${i}`).value);
         let winProb = 0;
-        if (total > 0 && own > 0) {
+        if (!isNaN(total) && total > 0 && !isNaN(own) && own > 0) {
           winProb = own / total;
           totalNoWinProb *= (1 - winProb);
+          anyInput = true;
         }
         resultsHTML += `<p>${tierLabels[i]}: ${(winProb * 100).toFixed(2)}% chance</p>`;
       }
 
-      const overallWinProb = 1 - totalNoWinProb;
+      const overallWinProb = anyInput ? (1 - totalNoWinProb) : 0;
       resultsHTML += `<p><strong>Overall chance:</strong> ${(overallWinProb * 100).toFixed(2)}%</p>`;
       document.getElementById('results').innerHTML = resultsHTML;
     });
