@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opepen Set Draw Probability Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      text-align: center;
+    }
+    .tier {
+      margin-bottom: 15px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 5px;
+      margin-bottom: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .results {
+      margin-top: 20px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h2>Opepen Set Draw Probability Calculator</h2>
+  <form id="probForm">
+    <div id="tiers"></div>
+    <button type="submit">Calculate Probabilities</button>
+  </form>
+
+  <div class="results" id="results"></div>
+
+  <script>
+    const tierLabels = [
+      "Rarity Tier 1/1",
+      "Rarity Tier 1/4",
+      "Rarity Tier 1/5",
+      "Rarity Tier 1/10",
+      "Rarity Tier 1/20",
+      "Rarity Tier 1/40"
+    ];
+
+    const tiersDiv = document.getElementById('tiers');
+
+    // Generate fields for each tier
+    for (let i = 0; i < tierLabels.length; i++) {
+      tiersDiv.innerHTML += `
+        <div class="tier">
+          <h3>${tierLabels[i]}</h3>
+          <label>Your Blanks:</label>
+          <input type="number" min="0" id="own${i}" required>
+          <label>Total Blanks Entered:</label>
+          <input type="number" min="0" id="total${i}" required>
+        </div>
+      `;
+    }
+
+    document.getElementById('probForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      let resultsHTML = "<h3>Results:</h3>";
+      let totalNoWinProb = 1;
+
+      for (let i = 0; i < tierLabels.length; i++) {
+        const own = parseInt(document.getElementById(`own${i}`).value) || 0;
+        const total = parseInt(document.getElementById(`total${i}`).value) || 0;
+        let winProb = 0;
+        if (total > 0 && own > 0) {
+          winProb = own / total;
+          totalNoWinProb *= (1 - winProb);
+        }
+        resultsHTML += `<p>${tierLabels[i]}: ${(winProb * 100).toFixed(2)}% chance</p>`;
+      }
+
+      const overallWinProb = 1 - totalNoWinProb;
+      resultsHTML += `<p><strong>Overall chance:</strong> ${(overallWinProb * 100).toFixed(2)}%</p>`;
+      document.getElementById('results').innerHTML = resultsHTML;
+    });
+  </script>
+</body>
+</html>
